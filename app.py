@@ -12,6 +12,14 @@ def hi():
     return "Hi, world!"
 
 
+def timeoutkill(rnum):
+    while True:
+        if RNUMS[rnum]["type"] == "STAY":
+            if time.time() - RNUMS[rnum]["timeout"] > 60:
+                del RNUMS[rnum]
+                break
+
+
 @app.route("/reg")
 def registration():
     args = request.args
@@ -22,6 +30,8 @@ def registration():
             RNUMS[rnum] = {}
             RNUMS[rnum]["com"] = []
             RNUMS[rnum]["ans"] = []
+            RNUMS[rnum]["timeout"] = time.time()
+            RNUMS[rnum]["type"] = "STAY"
             if "info" in args:
                 RNUMS[rnum]["info"] = args["info"]
             break
@@ -46,9 +56,11 @@ def sendcommand():
 def getcommand():
     args = request.args
     rnum = args["rnum"]
+    RNUMS[rnum]["timeout"] = time.time()
     while True:
         if len(RNUMS[rnum]["com"]) > 0:
             com = RNUMS[rnum]["com"].pop(0)
+            RNUMS[rnum]["type"] = "WORK"
             break
         time.sleep(0.1)
     return com
@@ -72,6 +84,7 @@ def sendanswer():
     rnum = args["rnum"]
     ans = args["ans"]
     RNUMS[rnum]["ans"].append(ans)
+    RNUMS[rnum]["type"] = "STAY"
     return "0"
 
 
