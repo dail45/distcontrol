@@ -46,13 +46,17 @@ def registration():
 def gernums():
     args = request.args
     full = args["full"]
+    if full == "False":
+        full = False
     if full:
         return RNUMS
     else:
         res = []
-        for k, v in RNUMS.items():
-            res.append(k)
-        return res
+        if RNUMS:
+            for k, v in RNUMS.items():
+                res.append(k)
+            return res
+        return {}
 
 
 @app.route("/sendcommand")
