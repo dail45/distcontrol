@@ -53,7 +53,7 @@ def gtrn():
     if RNUMS:
         for k, v in RNUMS.items():
             res.append(k)
-        return res
+        return str(res)
     return {}
 
 
