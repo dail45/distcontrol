@@ -1,3 +1,5 @@
+import threading
+
 from flask import Flask, request
 import os
 import time
@@ -32,6 +34,8 @@ def registration():
             RNUMS[rnum]["ans"] = []
             RNUMS[rnum]["timeout"] = time.time()
             RNUMS[rnum]["type"] = "STAY"
+            th = threading.Thread(target=timeoutkill, args=(rnum, ))
+            th.start()
             if "info" in args:
                 RNUMS[rnum]["info"] = args["info"]
             break
