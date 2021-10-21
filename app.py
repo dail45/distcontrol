@@ -46,9 +46,7 @@ def registration():
 def gernums():
     args = request.args
     full = args["full"]
-    if full == "False":
-        full = False
-    if full:
+    if full == "1":
         return RNUMS
     else:
         res = []
@@ -107,5 +105,3 @@ def sendanswer():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
-
-    
