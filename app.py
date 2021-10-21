@@ -36,13 +36,13 @@ def fun():
 @app.route("/download")
 def download():
     global download_link, total_length, file_chunks_number_gen, chunk_size, THREADS
-    if download_status() == "alive":
+    if donload_status() == "alive":
         return "0"
     restart()
     download_link = request.args["public_key"]
     if "Chunk-Size" in request.args:
         chunk_size = int(request.args["Chunk-Size"])
-    else:
+    else
         chunk_size = 4*1024*1024
     if "Threads" in request.args:
         THREADS = int(request.args["Threads"])
@@ -51,7 +51,7 @@ def download():
     data = requests.get(download_link, stream=True)
     ret = data.headers
     total_length = int(ret["Content-Length"])
-    data.close()
+    data.close(
     a = threading.Thread(target=generage_download_file_chunks)
     a.start()
     file_chunks_number_gen = generator_chunks_number()
@@ -60,7 +60,7 @@ def download():
 
 def generage_download_file_chunks():
     global file_chunks
-    #http = urllib3.PoolManager()
+    #http = urllib3.PoolManager(
     #r = http.urlopen("GET", download_link, preload_content=False, verify=False)
     #r.auto_close = False
     time.sleep(5)
@@ -120,8 +120,85 @@ def log():
             "file_chunks": file_chunks.keys(),
             "file_chunks['counter']": file_chunks["counter"],
             "total_length": total_length,
-            "file_chunks_number_gen": file_chunks_number_gen})
+            
+if __name__ == '__main__':
+    port = int(os.environ.get("PORT", 5000))
+    from flask import Flask, request
+import os
+import time
+import random
 
+
+app = Flask(__name__)
+RNUMS = {}
+
+
+@app.route("/")
+def hi():
+	return "Hi, world!"
+
+@app.route("/reg")
+def registration():
+	args = request.args
+	nums = list(range(10))
+	while True:
+		rnum = random.choices(nums, 6)
+		if rnum not in RNUMS:
+			RNUMS[rnum] = {}
+			RNUMS[rnum]["com"] = []
+			RNUMS[rnum]["ans"] = []
+			if info in args:
+				RNUMS[rnum]["info"] = info
+			break
+	return rnum
+	
+	
+@app.route("/getrnums")
+def gernums():
+	return RNUMS
+	
+
+@app.route("/sendcommand")
+def sendcommand():
+	args = request.args
+	rnum = args["rnum"]
+	com = args["com"]
+	RNUM[rnum]["com"].append(com)
+	return 0
+	
+
+@app.route("/getcommand")
+def getcommand():
+	args = request.args
+	rnum = args["rnum"]
+	while True:
+		if len(RNUM[rnum]["com"]) > 0:
+			com = RNUM[rnum]["com"].pop(0)
+			break
+		time.sleep(0.1)
+	return com
+
+
+@app.route("/getanswer")
+def getanswer():
+	args = request.args
+	rnum = args["rnum"]
+	while True:
+		if len(RNUM[rnum]["ans"]) > 0:
+			ans = RNUM[rnum]["ans"].pop(0)
+			break
+		time.sleep(0.1)
+	return ans
+
+
+@app.route("/sendanswer")
+def sendanswer():
+	args = request.args
+	rnum = args["rnum"]
+	ans = args["ans"]
+	RNUM[rnum]["ans"].append(ans)
+	return 0
+	
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
