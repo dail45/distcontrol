@@ -43,18 +43,18 @@ def registration():
 
 
 @app.route("/getrnums")
-def gernums():
-    args = request.args
-    full = args["full"]
-    if full == "1":
-        return RNUMS
-    else:
-        res = []
-        if RNUMS:
-            for k, v in RNUMS.items():
-                res.append(k)
-            return res
-        return {}
+def getrnums():
+    return RNUMS
+
+
+@app.route("/gtrn")
+def gtrn():
+    res = []
+    if RNUMS:
+        for k, v in RNUMS.items():
+            res.append(k)
+        return res
+    return {}
 
 
 @app.route("/sendcommand")
@@ -100,6 +100,12 @@ def sendanswer():
     RNUMS[rnum]["ans"].append(ans)
     RNUMS[rnum]["type"] = "STAY"
     return "0"
+
+
+@app.route("/restart")
+def restart():
+    global RNUMS
+    RNUMS = {}
 
 
 if __name__ == '__main__':
