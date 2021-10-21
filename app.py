@@ -44,7 +44,15 @@ def registration():
 
 @app.route("/getrnums")
 def gernums():
-    return RNUMS
+    args = request.args
+    full = args["full"]
+    if full:
+        return RNUMS
+    else:
+        res = []
+        for k, v in RNUMS.items():
+            res.append(k)
+        return res
 
 
 @app.route("/sendcommand")
