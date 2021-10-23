@@ -122,6 +122,12 @@ def sendanswer():
 def restart():
     global RNUMS
     RNUMS = {}
+    
+
+@app.route("/log/<rnum>")
+def getlog(rnum):
+    r = RNUMS[rnum]
+    return r
 
 
 if __name__ == '__main__':
