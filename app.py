@@ -17,7 +17,7 @@ def hi():
 def timeoutkill(rnum):
     while True:
         if RNUMS[rnum]["type"] == "STAY":
-            if time.time() - RNUMS[rnum]["timeout"] > 60:
+            if time.time() - RNUMS[rnum]["timeout"] > 40:
                 del RNUMS[rnum]
                 break
 
@@ -40,6 +40,20 @@ def registration():
                 RNUMS[rnum]["info"] = args["info"]
             break
     return rnum
+
+
+def login(rnum):
+    args = request.args
+    if rnum not in RNUMS:
+        RNUMS[rnum] = {}
+        RNUMS[rnum]["com"] = []
+        RNUMS[rnum]["ans"] = []
+        RNUMS[rnum]["timeout"] = time.time()
+        RNUMS[rnum]["type"] = "STAY"
+        th = threading.Thread(target=timeoutkill, args=(rnum,))
+        th.start()
+        if "info" in args:
+            RNUMS[rnum]["info"] = args["info"]
 
 
 @app.route("/getrnums")
@@ -70,6 +84,8 @@ def sendcommand():
 def getcommand():
     args = request.args
     rnum = args["rnum"]
+    if rnum not in RNUMS:
+        login(rnum)
     RNUMS[rnum]["timeout"] = time.time()
     while True:
         if len(RNUMS[rnum]["com"]) > 0:
