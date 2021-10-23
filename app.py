@@ -82,12 +82,15 @@ def sendcommand():
 
 @app.route("/getcommand")
 def getcommand():
+    start = time.time()
     args = request.args
     rnum = args["rnum"]
     if rnum not in RNUMS:
         login(rnum)
     RNUMS[rnum]["timeout"] = time.time()
     while True:
+        if time.time() - start > 20:
+            return "0"
         if len(RNUMS[rnum]["com"]) > 0:
             com = RNUMS[rnum]["com"].pop(0)
             RNUMS[rnum]["type"] = "WORK"
@@ -98,9 +101,12 @@ def getcommand():
 
 @app.route("/getanswer")
 def getanswer():
+    start = time.time()
     args = request.args
     rnum = args["rnum"]
     while True:
+        if time.time() - start > 20:
+            return "0"
         if len(RNUMS[rnum]["ans"]) > 0:
             ans = RNUMS[rnum]["ans"].pop(0)
             break
@@ -122,7 +128,7 @@ def sendanswer():
 def restart():
     global RNUMS
     RNUMS = {}
-    
+
 
 @app.route("/log/<rnum>")
 def getlog(rnum):
