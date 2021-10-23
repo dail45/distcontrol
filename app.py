@@ -43,9 +43,10 @@ def login(rnum):
 
 
 def clean():
-    for rnum in RNUMS.keys():
-        if time.time() - RNUMS[rnum]["timeout"] > 40:
-            del RNUMS[rnum]
+    if RNUMS:
+        for rnum in RNUMS.keys():
+            if time.time() - RNUMS[rnum]["timeout"] > 40:
+                del RNUMS[rnum]
 
 
 @app.route("/getrnums")
@@ -57,11 +58,8 @@ def getrnums():
 @app.route("/gtrn")
 def gtrn():
     clean()
-    res = []
     if RNUMS:
-        for k, v in RNUMS.items():
-            res.append(k)
-        return str(res)
+        return list(RNUMS.keys())
     return {}
 
 
