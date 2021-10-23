@@ -14,14 +14,6 @@ def hi():
     return "Hi, world!"
 
 
-def timeoutkill(rnum):
-    while True:
-        if RNUMS[rnum]["type"] == "STAY":
-            if time.time() - RNUMS[rnum]["timeout"] > 40:
-                del RNUMS[rnum]
-                break
-
-
 @app.route("/reg")
 def registration():
     args = request.args
@@ -33,9 +25,6 @@ def registration():
             RNUMS[rnum]["com"] = []
             RNUMS[rnum]["ans"] = []
             RNUMS[rnum]["timeout"] = time.time()
-            RNUMS[rnum]["type"] = "STAY"
-            th = threading.Thread(target=timeoutkill, args=(rnum, ))
-            th.start()
             if "info" in args:
                 RNUMS[rnum]["info"] = args["info"]
             break
@@ -49,20 +38,25 @@ def login(rnum):
         RNUMS[rnum]["com"] = []
         RNUMS[rnum]["ans"] = []
         RNUMS[rnum]["timeout"] = time.time()
-        RNUMS[rnum]["type"] = "STAY"
-        th = threading.Thread(target=timeoutkill, args=(rnum,))
-        th.start()
         if "info" in args:
             RNUMS[rnum]["info"] = args["info"]
 
 
+def clean():
+    for rnum in RNUMS.keys():
+        if time.time() - RNUMS[rnum]["timeout"] > 40:
+            del RNUMS[rnum]
+
+
 @app.route("/getrnums")
 def getrnums():
+    clean()
     return RNUMS
 
 
 @app.route("/gtrn")
 def gtrn():
+    clean()
     res = []
     if RNUMS:
         for k, v in RNUMS.items():
@@ -93,7 +87,6 @@ def getcommand():
             return "0"
         if len(RNUMS[rnum]["com"]) > 0:
             com = RNUMS[rnum]["com"].pop(0)
-            RNUMS[rnum]["type"] = "WORK"
             break
         time.sleep(0.1)
     return com
@@ -119,8 +112,8 @@ def sendanswer():
     args = request.args
     rnum = args["rnum"]
     ans = args["ans"]
+    RNUMS[rnum]["timeout"] = time.time()
     RNUMS[rnum]["ans"].append(ans)
-    RNUMS[rnum]["type"] = "STAY"
     return "0"
 
 
