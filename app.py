@@ -44,9 +44,13 @@ def login(rnum):
 
 def clean():
     if RNUMS:
-        for rnum in RNUMS.keys():
-            if time.time() - RNUMS[rnum]["timeout"] > 40:
-                del RNUMS[rnum]
+        try:
+            RKeys = RNUMS.keys()
+            for rnum in RKeys:
+                if time.time() - RNUMS[rnum]["timeout"] > 40:
+                    del RNUMS[rnum]
+        except Exception:
+            pass
 
 
 @app.route("/getrnums")
