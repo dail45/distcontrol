@@ -59,7 +59,7 @@ def getrnums():
 def gtrn():
     clean()
     if RNUMS:
-        return tuple(RNUMS.keys())
+        return str(list(RNUMS.keys()))
     return {}
 
 
